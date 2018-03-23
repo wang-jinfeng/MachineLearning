@@ -2,6 +2,8 @@
 from math import log
 import operator
 
+import pickle
+
 """
 熵（entropy）：
     熵指的是体系的混乱的程度，在不同的学科中也有引申出的更为具体的定义，是各领域十分重要的参量。
@@ -218,3 +220,15 @@ def classify(inputTree, featLabels, testVec):
     else:
         classLabel = valueOfFeat
     return classLabel
+
+
+#   使用pickle模块存储决策树
+def storeTree(inputTree, filename):
+    fw = open(filename, 'w')
+    pickle.dump(inputTree, fw)
+    fw.close()
+
+
+def grabTree(filename):
+    fr = open(filename, 'rb')
+    return pickle.load(fr)
