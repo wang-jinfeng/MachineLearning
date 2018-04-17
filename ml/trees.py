@@ -1,3 +1,4 @@
+#!/Users/wangjf/miniconda3/bin/python3
 # -*- coding:utf-8 -*-
 from math import log
 import operator

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding:utf-8
 """
 Created on Oct 12, 2010
@@ -171,7 +170,7 @@ def chooseBestFeatureToSplit(dataSet):
         # gain[信息增益]: 划分数据集前后的信息变化， 获取信息熵最大的值
         # 信息增益是熵的减少或者是数据无序度的减少。最后，比较所有特征中的信息增益，返回最好特征划分的索引值。
         infoGain = baseEntropy - newEntropy
-        print 'infoGain=', infoGain, 'bestFeature=', i, baseEntropy, newEntropy
+        print('infoGain=', infoGain, 'bestFeature=', i, baseEntropy, newEntropy)
         if (infoGain > bestInfoGain):
             bestInfoGain = infoGain
             bestFeature = i
@@ -278,7 +277,7 @@ def classify(inputTree, featLabels, testVec):
     # 测试数据，找到根节点对应的label位置，也就知道从输入的数据的第几位来开始分类
     key = testVec[featIndex]
     valueOfFeat = secondDict[key]
-    print '+++', firstStr, 'xxx', secondDict, '---', key, '>>>', valueOfFeat
+    print('+++', firstStr, 'xxx', secondDict, '---', key, '>>>', valueOfFeat)
     # 判断分枝是否结束: 判断valueOfFeat是否是dict类型
     if isinstance(valueOfFeat, dict):
         classLabel = classify(valueOfFeat, featLabels, testVec)
@@ -324,9 +323,9 @@ def fishTest():
 
     import copy
     myTree = createTree(myDat, copy.deepcopy(labels))
-    print myTree
+    print(myTree)
     # [1, 1]表示要取的分支上的节点位置，对应的结果值
-    print classify(myTree, labels, [1, 1])
+    print(classify(myTree, labels, [1, 1]))
 
     # 画图可视化展现
     dtPlot.createPlot(myTree)
@@ -350,7 +349,7 @@ def ContactLensesTest():
     lensesLabels = ['age', 'prescript', 'astigmatic', 'tearRate']
     # 使用上面的创建决策树的代码，构造预测隐形眼镜的决策树
     lensesTree = createTree(lenses, lensesLabels)
-    print lensesTree
+    print(lensesTree)
     # 画图可视化展现
     dtPlot.createPlot(lensesTree)
 
