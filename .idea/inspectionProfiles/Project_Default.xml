@@ -8,6 +8,7 @@
           <option value="E251" />
           <option value="E701" />
           <option value="E402" />
+          <option value="E501" />
         </list>
       </option>
     </inspection_tool>
@@ -17,6 +18,13 @@
           <option value="N806" />
           <option value="N803" />
           <option value="N802" />
+        </list>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="PyShadowingBuiltinsInspection" enabled="true" level="WEAK WARNING" enabled_by_default="true">
+      <option name="ignoredNames">
+        <list>
+          <option value="id" />
         </list>
       </option>
     </inspection_tool>
