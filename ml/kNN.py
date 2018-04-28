@@ -1,7 +1,8 @@
 # -*- coding:utf-8 -*-
-from numpy import *
-from os import listdir
 import operator
+from os import listdir
+
+from numpy import *
 
 
 def createDataSet():
@@ -134,9 +135,9 @@ def datingClassTest():
 # 约会网站测试代码
 def classifyPerson():
     resultList = ['not at all', 'in small doses', 'in large doses']
-    percentTats = float(raw_input("percentage of time spent playing video games?"))
-    ffMiles = float(raw_input("frequent flier miles earned per year?"))
-    iceCream = float(raw_input("liters of ice cream consumed per year?"))
+    percentTats = float(input("percentage of time spent playing video games?"))
+    ffMiles = float(input("frequent flier miles earned per year?"))
+    iceCream = float(input("liters of ice cream consumed per year?"))
     datingDataMat, datingLabels = file2matrix('/Users/wangjf/Downloads/machinelearninginaction/Ch02/datingTestSet2.txt')
     normMat, ranges, minVals = autoNorm(datingDataMat)
     inArr = array([ffMiles, percentTats, iceCream])
