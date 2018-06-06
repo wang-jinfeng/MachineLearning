@@ -11,7 +11,6 @@ import airflow
 from datetime import timedelta
 
 from airflow import DAG
-from airflow.contrib.operators.ssh_execute_operator import SSHExecuteOperator
 from airflow.operators.bash_operator import BashOperator
 
 default_args = {
@@ -28,11 +27,7 @@ dag = DAG(
     default_args=default_args
 )
 
-t1 = SSHExecuteOperator()
-
-command = """
-    ssh -i /var/lib/spark/wangjf/data/bpu-test-new.pem ec2-user@10.1.28.107 pwd
-"""
+command = "ssh -i /var/lib/spark/wangjf/data/bpu-test-new.pem ec2-user@10.1.28.107 pwd "
 
 BashOperator(task_id='airflow_ssh',
              depends_on_past=False,
