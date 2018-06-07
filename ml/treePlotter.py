@@ -1,8 +1,11 @@
 # coding=utf-8
+import sys
+from imp import reload
+
 import matplotlib.pyplot as plt
 
-# reload(sys)
-# sys.setdefaultencoding('utf-8')
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 decisionNode = dict(boxstyle='sawtooth', fc='0.8')
 leafNode = dict(boxstyle='round4', fc='0.8')
