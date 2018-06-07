@@ -1,9 +1,8 @@
 # coding=utf-8
 import matplotlib.pyplot as plt
-import sys
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 
 decisionNode = dict(boxstyle='sawtooth', fc='0.8')
 leafNode = dict(boxstyle='round4', fc='0.8')
@@ -52,7 +51,7 @@ def getTreeDepth(myTree):
 
 def retrieveTree(i):
     listOfTrees = [{'no surfacing': {0: 'no', 1: {'flippers':
-                                                       {0: 'no', 1: 'yes'}}}},
+                                                      {0: 'no', 1: 'yes'}}}},
                    {'no sufacing': {0: 'no', 1: {'flippers':
                                                      {0: {'head': {0: 'no', 1: 'yes'}}, 1: 'no'}}}}
                    ]
