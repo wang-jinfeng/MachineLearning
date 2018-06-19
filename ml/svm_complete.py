@@ -7,8 +7,8 @@
     File    : svm-complete.py
     GitHub  : https://github.com/wjf0627
 """
-from numpy import *
 import matplotlib.pyplot as plt
+from numpy import *
 
 
 class optStruct:
@@ -37,7 +37,7 @@ class optStruct:
 
         #   数据的行数
         self.m = shape(dataMatIn)[0]
-        self.alphs = mat(zeros((self.m, 1)))
+        self.alphas = mat(zeros((self.m, 1)))
         self.b = 0
 
         #   误差缓存，第一列给出的是 eCache 是否有效的标志位，第二列给出的是实际的 E 值
@@ -104,7 +104,7 @@ def calcEk(oS, k):
     :return:
         Ek 预测结果与真实结果比对，计算误差 Ek
     """
-    fXK = multiply(oS.alphs, oS.labelMat).T * oS.K[:, k] + oS.b
+    fXK = multiply(oS.alphas, oS.labelMat).T * oS.K[:, k] + oS.b
     Ek = fXK - float(oS.labelMat[k])
     return Ek
 
@@ -279,7 +279,7 @@ def innerL(i, oS):
         return 0
 
 
-def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup):
+def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup=('lin', 0)):
     """
     完整SMO算法外循环，与smoSimple 有些类似，但这里的循环退出条件多一些
     :param dataMatIn:
@@ -320,7 +320,7 @@ def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup):
         #   对已存在 alpha对，选出非边界的 alpha 值，进行优化
         else:
             #   遍历所有的非边界 alpha 值，也就是不在边界 0 或 C 上的值
-            nonBoundIs = nonzero((oS.alphs.A > 0) * (oS.alphs.A < C))[0]
+            nonBoundIs = nonzero((oS.alphas.A > 0) * (oS.alphas.A < C))[0]
             for i in nonBoundIs:
                 alphaPairsChanged += innerL(i, oS)
                 print("non-bound,iter:%d i:%d,pairs changed %d" % (iter, i, alphaPairsChanged))
@@ -340,8 +340,8 @@ def smoP(dataMatIn, classLabels, C, toler, maxIter, kTup):
             entireSet = False
         elif alphaPairsChanged == 0:
             entireSet = True
-        print("iteration number:%d" & iter)
-    return oS.b, oS.alphs
+        print("iteration number:%d" % iter)
+    return oS.b, oS.alphas
 
 
 def calcWs(alphas, dataArr, classLabels):
@@ -379,7 +379,7 @@ def testRbf(k1=1.3):
     m, n = shape(dataMat)
     errorCount = 0
     for i in range(m):
-        kernelEval = kernelEval(sVs, dataMat[i, :], ('rbf', k1))
+        kernelEval = kernelTrans(sVs, dataMat[i, :], ('rbf', k1))
 
         #   和这个svm-simple类似：fXi = float(multiply(alphas,labelMat).T * (dataMatrix * dataMatrix[i,:].T)) + b
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
@@ -387,13 +387,13 @@ def testRbf(k1=1.3):
             errorCount += 1
     print("the training error rate is:%f" % (float(errorCount) / m))
 
-    dataArr, labelArr = loadDataSet('')
+    dataArr, labelArr = loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testSetRBF2.txt')
     errorCount = 0
     dataMat = mat(dataArr)
     labelMat = mat(labelArr).transpose()
     m, n = shape(dataMat)
     for i in range(m):
-        kernelEval = kernelEval(sVs, dataMat[i, :], ('rbf', k1))
+        kernelEval = kernelTrans(sVs, dataMat[i, :], ('rbf', k1))
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
         if sign(predict) != sign(labelMat[i]):
             errorCount += 1
@@ -404,7 +404,7 @@ def img2vector(filename):
     returnVect = zeros((1, 1024))
     fr = open(filename)
     for i in range(32):
-        lineStr = fr.readlines()
+        lineStr = fr.readline()
         for j in range(32):
             returnVect[0, 32 * i + j] = int(lineStr[j])
     return returnVect
@@ -422,7 +422,7 @@ def loadImages(dirName):
         fileNameStr = trainingFileList[i]
         #   take off .txt
         fileStr = fileNameStr.split('.')[0]
-        classNumStr = int(fileStr.split('.')[0])
+        classNumStr = int(fileStr.split('_')[0])
         if classNumStr == 9:
             hwLabels.append(-1)
         else:
@@ -433,7 +433,7 @@ def loadImages(dirName):
 
 def testDigits(kTup=('rbf', 10)):
     #   1.导入训练数据
-    dataArr, labelArr = loadImages('/Users/wangjf/Downloads/machinelearninginaction/Ch06')
+    dataArr, labelArr = loadImages('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/trainingDigits')
     b, alphas = smoP(dataArr, labelArr, 200, 0.0001, 10000, kTup)
     dataMat = mat(dataArr)
     labelMat = mat(labelArr).transpose()
@@ -447,11 +447,12 @@ def testDigits(kTup=('rbf', 10)):
         kernelEval = kernelTrans(sVs, dataMat[i, :], kTup)
         # 1*m * m*1 = 1*1 单个预测结果
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
-        if sign(predict) != sign(labelArr[i]): errorCount += 1
+        if sign(predict) != sign(labelArr[i]):
+            errorCount += 1
     print('the training error rate is:%f' % (float(errorCount) / m))
 
     #   2.导入测试数据
-    dataArr, labelArr = loadImages('/Users/wangjf/Downloads/machinelearninginaction/Ch06/')
+    dataArr, labelArr = loadImages('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testDigits')
     errorCount = 0
     dataMat = mat(dataArr)
     labelMat = mat(labelArr).transpose()
@@ -459,7 +460,8 @@ def testDigits(kTup=('rbf', 10)):
     for i in range(m):
         kernelEval = kernelTrans(sVs, dataMat[i, :], kTup)
         predict = kernelEval.T * multiply(labelSV, alphas[svInd]) + b
-        if sign(predict) != sign(labelArr[i]): errorCount += 1
+        if sign(predict) != sign(labelArr[i]):
+            errorCount += 1
     print('the test error rate is: %f' % (float(errorCount) / m))
 
 
@@ -495,4 +497,32 @@ def plotfig_SVM(xArr, yArr, ws, b, alphas):
 
 
 if __name__ == "__main__":
-    testDigits('rbf', 10)
+    #   无核函数测试
+    #   获取特征和目标向量
+    #   dataArr, labelArr = loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testSet.txt')
+    #   print(labelArr)
+
+    #   b 是常量值，alphas 是拉格朗日乘子
+    #   b, alphas = smoP(dataArr, labelArr, 0.6, 0.001, 40)
+    #   print('b = ', b)
+    #   print('alphas[alphas>0] = ', alphas[alphas > 0])
+    #   print('shape(alphas[alphas>0]) = ', shape(alphas[alphas > 0]))
+
+    #   for i in range(100):
+    #   if alphas[i] > 0:
+    #   print(dataArr[i], labelArr[i])
+
+    #   画图
+    #   ws = calcWs(alphas, dataArr, labelArr)
+    #   plotfig_SVM(dataArr, labelArr, ws, b, alphas)
+
+    #   有核函数的测试
+    #   testRbf(0.8)
+
+    #   项目实战
+    #   示例：手写识别问题回顾
+    #   loadImages('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/trainingDigits')
+    #   testDigits(('rbf', 0.1))
+    #   testDigits(('rbf', 10))
+
+    testDigits(('lin', 10))
