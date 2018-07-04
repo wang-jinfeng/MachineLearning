@@ -10,7 +10,7 @@
 
 #   默认解析的数据用 tab 分割，并且是数值类型
 #   general function to parse tab -delimited floats
-from numpy import nonzero, mean, var, shape, inf, power, mat, ones, linalg, corrcoef, eye, zeros
+from numpy import nonzero, mean, var, shape, inf, power, mat, ones, linalg, corrcoef, zeros
 
 
 def loadDataSet(fileName):
@@ -429,3 +429,4 @@ if __name__ == "__main__":
     for i in range(shape(testMat)[0]):
         yHat3[i] = testMat[i, 0] * ws[1, 0] + ws[0, 0]
     print('线性回归：', corrcoef(yHat3, testMat[:, 1], rowvar=0)[0, 1])
+
