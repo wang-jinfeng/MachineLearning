@@ -66,7 +66,7 @@ def scanD(D, Ck, minSupport):
                     ssCnt[can] = 1
                 else:
                     ssCnt[can] += 1
-    numItems = float(len(D))  # 数据集 D 的数量
+    numItems = float(D.__len__())  # 数据集 D 的数量
     retList = []
     supportData = {}
     for key in ssCnt:
@@ -123,9 +123,9 @@ def apriori(dataSet, minSupport=0.5):
     #   C1 即对 dataSet 进行去重，排序，放入 list 中，然后转换所有的元素为 frozenset
     C1 = createC1(dataSet)
     #   对每一行进行 set 转换，然后存放到集合中
-    D = map(set, dataSet)
+    D = list(map(set, dataSet))
     #   计算候选数据集 C1 在数据集 D 中的支持度，并返回支持度大于 minSupport 的数据
-    L1, supportData = scanD(D, C1, minSupport)
+    L1, supportData = scanD(D, list(C1), minSupport)
     L = [L1]
     k = 2
     #   判断 L 的第 k-2 项的数据长度是否 > 0。
@@ -331,9 +331,11 @@ def main():
     #   testApriori()
 
     #   生成关联规则
-    #   testGenerateRules()
+    testGenerateRules()
 
     # # 得到全集的数据
+
+    """
     dataSet = [line.split() for line in
                open("/Users/wangjf/Downloads/machinelearninginaction/Ch11/mushroom.dat").readlines()]
     L, supportData = apriori(dataSet, minSupport=0.3)
@@ -342,10 +344,14 @@ def main():
     for item in L[1]:
         if item.intersection('2'):
             print(item)
-
+    
     for item in L[2]:
         if item.intersection('2'):
             print(item)
+    """
+    #   dataSet = loadDataSet()
+    #   C1 = createC1(dataSet)
+    #   print(C1)
 
 
 if __name__ == '__main__':
