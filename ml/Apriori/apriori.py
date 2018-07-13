@@ -123,7 +123,7 @@ def apriori(dataSet, minSupport=0.5):
     #   C1 即对 dataSet 进行去重，排序，放入 list 中，然后转换所有的元素为 frozenset
     C1 = createC1(dataSet)
     #   对每一行进行 set 转换，然后存放到集合中
-    D = list(map(set, dataSet))
+    D = list(map(frozenset, dataSet))
     #   计算候选数据集 C1 在数据集 D 中的支持度，并返回支持度大于 minSupport 的数据
     L1, supportData = scanD(D, list(C1), minSupport)
     L = [L1]
@@ -251,7 +251,7 @@ def getActionId():
     for line in fr.readlines():
         billNum = int(line.split('\t')[0])
         try:
-            billDetail = votesmart.votes.getBill(billNum)
+            billDetail = votesmart.votes.getBill(billNum, "")
             for action in billDetail.actions:
                 if action.level == 'House' and (action.stage == 'Passage' or action.stage == 'Amendment Vote'):
                     actionId = int(action.actionId)
@@ -331,7 +331,7 @@ def main():
     #   testApriori()
 
     #   生成关联规则
-    testGenerateRules()
+    #   testGenerateRules()
 
     # # 得到全集的数据
 
@@ -352,6 +352,9 @@ def main():
     #   dataSet = loadDataSet()
     #   C1 = createC1(dataSet)
     #   print(C1)
+    actionIdList, billTitles = getActionId()
+    print(actionIdList)
+    print(billTitles)
 
 
 if __name__ == '__main__':
