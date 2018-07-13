@@ -8,8 +8,13 @@
     GitHub  : https://github.com/wjf0627
 """
 
-
 #   加载数据集
+from time import sleep
+
+from numpy import *
+from votesmart import votesmart
+
+
 def loadDataSet():
     return [[1, 3, 4], [2, 3, 5], [1, 2, 3, 5], [2, 5]]
 
@@ -29,12 +34,12 @@ def createC1(dataSet):
             if not [item] in C1:
                 #   遍历所有的元素，如果不在 C1 出现过，那么就 append
                 C1.append([item])
-    #   对数组进行 '从小到大' 的排序
-    print('sort 前 = ', C1)
+        #   对数组进行 '从小到大' 的排序
+        #   print('sort 前 = ', C1)
     C1.sort()
     #   frozenset 表示冻结的 set 集合，元素无改变，可以把它当字典的 key 来使用
-    print('sort 后 = ', C1)
-    print('frozenset = ', map(frozenset, C1))
+    #   print('sort 后 = ', C1)
+    #   print('frozenset = ', map(frozenset, C1))
     return map(frozenset, C1)
 
 
@@ -57,7 +62,7 @@ def scanD(D, Ck, minSupport):
         for can in Ck:
             #   s.issubset(t)   测试是否 s 中的每一个元素都在 t 中
             if can.issubset(tid):
-                if not ssCnt.has_key(can):
+                if can not in ssCnt:
                     ssCnt[can] = 1
                 else:
                     ssCnt[can] += 1
@@ -236,3 +241,112 @@ def generateRules(L, supportData, minConf=0.7):
             else:
                 calcConf(freqSet, H1, supportData, bigRuleList, minConf)
     return bigRuleList
+
+
+def getActionId():
+    votesmart.apikey = 'a7fa40adec6f4a77178799fae4441030'
+    actionIdList = []
+    billTitleList = []
+    fr = open('/Users/wangjf/Downloads/machinelearninginaction/Ch11/recent20bills.txt')
+    for line in fr.readlines():
+        billNum = int(line.split('\t')[0])
+        try:
+            billDetail = votesmart.votes.getBill(billNum)
+            for action in billDetail.actions:
+                if action.level == 'House' and (action.stage == 'Passage' or action.stage == 'Amendment Vote'):
+                    actionId = int(action.actionId)
+                    print('bill: %d has actionId: %d' % (billNum, actionId))
+                    actionIdList.append(actionId)
+                    billTitleList.append(line.strip().split('\t')[1])
+        except:
+            print('problem getting bill %d' % billNum)
+        sleep(1)
+    return actionIdList, billTitleList
+
+
+def getTransList(actionIdList, billTitleList):
+    itemMeaning = ['Republican', 'Democratic']
+    for billTitle in billTitleList:
+        itemMeaning.append('%s -- Nay' % billTitle)
+        itemMeaning.append('%s -- Yea' % billTitle)
+    transDict = {}
+    voteCount = 2
+    for actionId in actionIdList:
+        sleep(3)
+        print('getting votes for actionId: %d' % actionId)
+        try:
+            voteList = votesmart.votes.getBillActionVotes(actionId)
+            for vote in voteList:
+                if not transDict.has_key(vote.candidateName):
+                    transDict[vote.candidateName] = []
+                    if vote.officeParties == 'Democratic':
+                        transDict[vote.candidateName].append(1)
+                    elif vote.officeParties == 'Republican':
+                        transDict[vote.candidateName].append(0)
+                if vote.action == 'Nay':
+                    transDict[vote.candidateName].append(voteCount)
+                elif vote.action == 'Yea':
+                    transDict[vote.candidateName].append(voteCount + 1)
+        except:
+            print('problem getting actionId: %' % actionId)
+        voteCount += 2
+    return transDict, itemMeaning
+
+
+def testApriori():
+    #   加载测试数据集
+    dataSet = loadDataSet()
+    print('dataSet: ', dataSet)
+
+    #   Apriori 算法生成频繁项集以及它们的支持度
+    L1, supportData1 = apriori(dataSet, minSupport=0.7)
+    print('L(0.7): ', L1)
+    print('supportData(0.7): ', supportData1)
+
+    print('->->->->->->->->->->->->->->->->->->->->->->->->->->->')
+
+    #   Apriori 算法生成频繁项集以及它们的支持度
+    L2, supportData2 = apriori(dataSet, minSupport=0.5)
+    print('L(0.5): ', L2)
+    print('supportData(0.2): ', supportData2)
+
+
+def testGenerateRules():
+    #   加载测试数据集
+    dataSet = loadDataSet()
+    print('dataSet: ', dataSet)
+
+    #   Apriori 算法生成频繁项集以及它们的支持度
+    L1, supportData1 = apriori(dataSet, minSupport=0.5)
+    print('L(0.7): ', L1)
+    print('supportData(0.7): ', supportData1)
+
+    #   生成关联规则
+    rules = generateRules(L1, supportData1, minConf=0.5)
+    print('rules: ', rules)
+
+
+def main():
+    #   测试 Apriori 算法
+    #   testApriori()
+
+    #   生成关联规则
+    #   testGenerateRules()
+
+    # # 得到全集的数据
+    dataSet = [line.split() for line in
+               open("/Users/wangjf/Downloads/machinelearninginaction/Ch11/mushroom.dat").readlines()]
+    L, supportData = apriori(dataSet, minSupport=0.3)
+    # # 2表示毒蘑菇，1表示可食用的蘑菇
+    # # 找出关于2的频繁子项出来，就知道如果是毒蘑菇，那么出现频繁的也可能是毒蘑菇
+    for item in L[1]:
+        if item.intersection('2'):
+            print(item)
+
+    for item in L[2]:
+        if item.intersection('2'):
+            print(item)
+
+
+if __name__ == '__main__':
+    main()
