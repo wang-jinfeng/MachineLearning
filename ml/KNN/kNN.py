@@ -6,9 +6,9 @@ from numpy import *
 
 
 def createDataSet():
-    group = array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
-    labels = ['A', 'A', 'B', 'B']
-    return group, labels
+	group = array([[1.0, 1.1], [1.0, 1.0], [0, 0], [0, 0.1]])
+	labels = ['A', 'A', 'B', 'B']
+	return group, labels
 
 
 """
@@ -23,172 +23,173 @@ def createDataSet():
 
 # k-近邻算法
 def classify(inX, dataSet, labels, k):
-    dataSetSize = dataSet.shape[0]
-    #   距离度量，度量公式为欧式距离
-    diffMat = tile(inX, (dataSetSize, 1)) - dataSet
-    sqDiffMat = diffMat ** 2
-    sqDistances = sqDiffMat.sum(axis=1)
-    distances = sqDistances ** 0.5
-    #   将距离排序：从小到大
-    sortedDistIndicies = distances.argsort()
-    #   选取前K个最短距离，选取这K个中最多的分类类别
-    classCount = {}
-    for i in range(k):
-        voteIlabel = labels[sortedDistIndicies[i]]
-        classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
+	dataSetSize = dataSet.shape[0]
+	#   距离度量，度量公式为欧式距离
+	diffMat = tile(inX, (dataSetSize, 1)) - dataSet
+	sqDiffMat = diffMat ** 2
+	sqDistances = sqDiffMat.sum(axis=1)
+	distances = sqDistances ** 0.5
+	#   将距离排序：从小到大
+	sortedDistIndicies = distances.argsort()
+	#   选取前K个最短距离，选取这K个中最多的分类类别
+	classCount = {}
+	for i in range(k):
+		voteIlabel = labels[sortedDistIndicies[i]]
+		classCount[voteIlabel] = classCount.get(voteIlabel, 0) + 1
 
-    sortedClassCount = sorted(classCount.iteritems(),
-                              key=operator.itemgetter(1), reverse=True)
+	sortedClassCount = sorted(classCount.items(),
+	                          key=operator.itemgetter(1), reverse=True)
 
-    return sortedClassCount[0][0]
+	return sortedClassCount[0][0]
 
 
 # 将文本记录转化为NumPy的解析程序
 def file2matrix(filename):
-    """
-    param:
-        filename:数据文件路径
-    return:
-        数据矩阵 returnMat 和对应的类别 classLabelVector
-    from ml import kNN
-    datingDataMat,datingLabels = kNN.file2matrix("/Users/wangjf/Downloads/machinelearninginaction/Ch02/datingTestSet2.txt")
+	"""
+	param:
+		filename:数据文件路径
+	return:
+		数据矩阵 returnMat 和对应的类别 classLabelVector
+	from ml import kNN
+	datingDataMat,datingLabels = kNN.file2matrix("/Users/wangjf/Workspace/AiLearning/data/2.KNN/datingTestSet2.txt")
 
-    import matplotlib
-    import matplotlib.pyplot as plt
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-    ax.scatter(datingDataMat[:,1],datingDataMat[:,2])
-    ax.scatter(datingDataMat[:,1],datingDataMat[:,2],15.0*array(datingLabels),15.0*array(datingLabels))
-    """
-    fr = open(filename)
-    arrayOLines = fr.readlines()
-    #   获得文件中的数据行的行数
-    numberOfLines = len(arrayOLines)
-    #   生成对应的空矩阵
-    returnMat = zeros((numberOfLines, 3))
-    classLabelVector = []
-    index = 0
-    for line in arrayOLines:
-        #   返回移除字符串头尾指定的字符生成的新字符串
-        line = line.strip()
-        #   以'\t'切割字符串
-        listFromLine = line.split('\t')
-        #   每列的属性数据
-        returnMat[index, :] = listFromLine[0:3]
-        #   每列的类别数据，就是label标签数据
-        classLabelVector.append(int(listFromLine[-1]))
-        index += 1
-    #   返回数据矩阵returnMat和对应的类别classLabelVector
-    return returnMat, classLabelVector
+	import matplotlib
+	import matplotlib.pyplot as plt
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	ax.scatter(datingDataMat[:,1],datingDataMat[:,2])
+	ax.scatter(datingDataMat[:,1],datingDataMat[:,2],15.0*array(datingLabels),15.0*array(datingLabels))
+	"""
+	fr = open(filename)
+	arrayOLines = fr.readlines()
+	#   获得文件中的数据行的行数
+	numberOfLines = len(arrayOLines)
+	#   生成对应的空矩阵
+	returnMat = zeros((numberOfLines, 3))
+	classLabelVector = []
+	index = 0
+	for line in arrayOLines:
+		#   返回移除字符串头尾指定的字符生成的新字符串
+		line = line.strip()
+		#   以'\t'切割字符串
+		listFromLine = line.split('\t')
+		#   每列的属性数据
+		returnMat[index, :] = listFromLine[0:3]
+		#   每列的类别数据，就是label标签数据
+		classLabelVector.append(int(listFromLine[-1]))
+		index += 1
+	#   返回数据矩阵returnMat和对应的类别classLabelVector
+	return returnMat, classLabelVector
 
 
 # 归一化特征值
 def autoNorm(dataSet):
-    """
-    :param dataSet:数据集
-    :return:
-        归一化后的数据集normDataSet,ranges和minVals即最小值与范围，并没有用到
-    归一化公式:
-        Y = (X-Xmin)/(Xmax-Xmin)
-        其中的 min 和 max 分别是数据集中的最小特征值和最大特征值。该函数可以自动将数字特征值转换为 0 到 1 的区间
-    """
-    #   计算每种属性的最大值，最小值，范围
-    minVals = dataSet.min(0)
-    maxVals = dataSet.max(0)
-    #   极差
-    ranges = maxVals - minVals
-    normDataSet = zeros(shape(dataSet))
-    m = dataSet.shape[0]
-    #   生成与最小值之差组成的矩阵
-    normDataSet = normDataSet - tile(minVals, (m, 1))
-    #   将最小值之差除以范围组成矩阵
-    normDataSet = normDataSet / tile(ranges, (m, 1))
-    return normDataSet, ranges, minVals
+	"""
+	:param dataSet:数据集
+	:return:
+		归一化后的数据集normDataSet,ranges和minVals即最小值与范围，并没有用到
+	归一化公式:
+		Y = (X-Xmin)/(Xmax-Xmin)
+		其中的 min 和 max 分别是数据集中的最小特征值和最大特征值。该函数可以自动将数字特征值转换为 0 到 1 的区间
+	"""
+	#   计算每种属性的最大值，最小值，范围
+	minVals = dataSet.min(0)
+	maxVals = dataSet.max(0)
+	#   极差
+	ranges = maxVals - minVals
+	normDataSet = zeros(shape(dataSet))
+	m = dataSet.shape[0]
+	#   生成与最小值之差组成的矩阵
+	normDataSet = normDataSet - tile(minVals, (m, 1))
+	#   将最小值之差除以范围组成矩阵
+	normDataSet = normDataSet / tile(ranges, (m, 1))
+	return normDataSet, ranges, minVals
 
 
 # 分类器针对约会网站的测试代码
 def datingClassTest():
-    """
-    对约会网站的测试方法
-    :return:
-        错误数
-    """
-    #   设置测试数据的一个比例（训练数据集比例=1-hoRatio）
-    hoRatio = 0.1  # 测试范围，一部分测试一部分作为样本
-    #   从文本中加载数据
-    datingDataMat, datingLabels = file2matrix('/Users/wangjf/Downloads/machinelearninginaction/Ch02/datingTestSet2.txt')
-    #   归一化数据
-    normMat, ranges, minVals = autoNorm(datingDataMat)
-    #   m 表示数据的行数，即矩阵的第一维
-    m = normMat.shape[0]
-    #   设置测试的样本数量，numTestVecs:m 表示训练样本的数量
-    numTestVecs = int(m * hoRatio)
-    errorCount = 0.0
-    for i in range(numTestVecs):
-        #   对数据测试
-        classifierResult = classify(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
-        print("the classifier came back with: %d,the real answer is: %d" % (classifierResult, datingLabels[i]))
-        if classifierResult != datingLabels[i]: errorCount += 1.0
-    print("the total error rate is: %f" % (errorCount / float(numTestVecs)))
+	"""
+	对约会网站的测试方法
+	:return:
+		错误数
+	"""
+	#   设置测试数据的一个比例（训练数据集比例=1-hoRatio）
+	hoRatio = 0.1  # 测试范围，一部分测试一部分作为样本
+	#   从文本中加载数据
+	datingDataMat, datingLabels = file2matrix('/Users/wangjf/Workspace/AiLearning/data/2.KNN/datingTestSet2.txt')
+	#   归一化数据
+	normMat, ranges, minVals = autoNorm(datingDataMat)
+	#   m 表示数据的行数，即矩阵的第一维
+	m = normMat.shape[0]
+	#   设置测试的样本数量，numTestVecs:m 表示训练样本的数量
+	numTestVecs = int(m * hoRatio)
+	errorCount = 0.0
+	for i in range(numTestVecs):
+		#   对数据测试
+		classifierResult = classify(normMat[i, :], normMat[numTestVecs:m, :], datingLabels[numTestVecs:m], 3)
+		print("the classifier came back with: %d,the real answer is: %d" % (classifierResult, datingLabels[i]))
+		if classifierResult != datingLabels[i]: errorCount += 1.0
+	print("the total error rate is: %f" % (errorCount / float(numTestVecs)))
+	print(errorCount)
 
 
 # 约会网站测试代码
 def classifyPerson():
-    resultList = ['not at all', 'in small doses', 'in large doses']
-    percentTats = float(input("percentage of time spent playing video games?"))
-    ffMiles = float(input("frequent flier miles earned per year?"))
-    iceCream = float(input("liters of ice cream consumed per year?"))
-    datingDataMat, datingLabels = file2matrix('/Users/wangjf/Downloads/machinelearninginaction/Ch02/datingTestSet2.txt')
-    normMat, ranges, minVals = autoNorm(datingDataMat)
-    inArr = array([ffMiles, percentTats, iceCream])
-    classifierResult = classify((inArr - minVals) / ranges, normMat, datingLabels, 3)
-    print("You will probably like this person: ", resultList[classifierResult - 1])
+	resultList = ['not at all', 'in small doses', 'in large doses']
+	percentTats = float(input("percentage of time spent playing video games?"))
+	ffMiles = float(input("frequent flier miles earned per year?"))
+	iceCream = float(input("liters of ice cream consumed per year?"))
+	datingDataMat, datingLabels = file2matrix('/Users/wangjf/Workspace/AiLearning/data/2.KNN/datingTestSet2.txt')
+	normMat, ranges, minVals = autoNorm(datingDataMat)
+	inArr = array([ffMiles, percentTats, iceCream])
+	classifierResult = classify((inArr - minVals) / ranges, normMat, datingLabels, 3)
+	print("You will probably like this person: ", resultList[classifierResult - 1])
 
 
 # 手写识别系统
 def img2vector(filename):
-    returnVect = zeros((1, 1024))
-    fr = open(filename)
-    for i in range(32):
-        lineStr = fr.readlines()
-        for j in range(32):
-            returnVect[0, 32 * i + j] = int(lineStr[j])
-    return returnVect
+	returnVect = zeros((1, 1024))
+	fr = open(filename)
+	for i in range(32):
+		lineStr = list(fr.readline())
+		for j in range(32):
+			returnVect[0, 32 * i + j] = int(lineStr[j])
+	return returnVect
 
 
 # 手写数字识别系统的测试代码
 def handwritingClassTest():
-    #   导入训练数据
-    hwLabels = []
-    trainingFileList = listdir('/Users/wangjf/Downloads/machinelearninginaction/Ch02/digits/trainingDigits')
-    m = len(trainingFileList)
-    trainingMat = zeros((m, 1024))
-    #   hwLabels存储0~9对应的index位置，trainingMat存放的每个位置对应的图片向量
-    for i in range(m):
-        fileNameStr = trainingFileList[i]
-        fileStr = fileNameStr.split(".")[0]
-        classNumStr = int(fileStr.split("_")[0])
-        hwLabels.append(classNumStr)
-        #   将 32*32 的矩阵->1*1024的矩阵
-        trainingMat[i, :] = img2vector(
-            "/Users/wangjf/Downloads/machinelearninginaction/Ch02/digits/trainingDigits/%s" % fileNameStr)
+	#   导入训练数据
+	hwLabels = []
+	trainingFileList = listdir('/Users/wangjf/Workspace/AiLearning/data/2.KNN/trainingDigits')
+	m = len(trainingFileList)
+	trainingMat = zeros((m, 1024))
+	#   hwLabels存储0~9对应的index位置，trainingMat存放的每个位置对应的图片向量
+	for i in range(m):
+		fileNameStr = trainingFileList[i]
+		fileStr = fileNameStr.split(".")[0]
+		classNumStr = int(fileStr.split("_")[0])
+		hwLabels.append(classNumStr)
+		#   将 32*32 的矩阵->1*1024的矩阵
+		trainingMat[i, :] = img2vector(
+			"/Users/wangjf/Workspace/AiLearning/data/2.KNN/trainingDigits/%s" % fileNameStr)
 
-    #   导入测试数据
-    testFileList = listdir("/Users/wangjf/Downloads/machinelearninginaction/Ch02/digits/testDigits")
-    errorCount = 0.0
-    mTest = len(testFileList)
-    for i in range(mTest):
-        fileNameStr = testFileList[i]
-        fileStr = fileNameStr.split('.')[0]
-        classNumStr = int(fileStr.split('_')[0])
-        vectorUnderTest = img2vector(
-            '/Users/wangjf/Downloads/machinelearninginaction/Ch02/digits/testDigits/%s' % fileNameStr)
-        classifierResult = classify(vectorUnderTest, trainingMat, hwLabels, 3)
-        print("the classifier came back with: %d,the real answer is: %d" % (classifierResult, classNumStr))
-        if classifierResult != classNumStr: errorCount += 1.0
+	#   导入测试数据
+	testFileList = listdir("/Users/wangjf/Workspace/AiLearning/data/2.KNN/testDigits")
+	errorCount = 0.0
+	mTest = len(testFileList)
+	for i in range(mTest):
+		fileNameStr = testFileList[i]
+		fileStr = fileNameStr.split('.')[0]
+		classNumStr = int(fileStr.split('_')[0])
+		vectorUnderTest = img2vector(
+			'/Users/wangjf/Workspace/AiLearning/data/2.KNN/testDigits/%s' % fileNameStr)
+		classifierResult = classify(vectorUnderTest, trainingMat, hwLabels, 3)
+		print("the classifier came back with: %d,the real answer is: %d" % (classifierResult, classNumStr))
+		if classifierResult != classNumStr: errorCount += 1.0
 
-    print('\nthe total number of errors is: %d' % errorCount)
-    print('\nthe total error rate is: %f' % (errorCount / float(mTest)))
+	print('\nthe total number of errors is: %d' % errorCount)
+	print('\nthe total error rate is: %f' % (errorCount / float(mTest)))
 
 
 """
@@ -208,3 +209,20 @@ k 值的选择
 分类决策规则
     1、k 近邻算法中的分类决策规则往往是多数表决，即由输入实例的 k 个邻近的训练实例中的多数类决定输入实例的类。
 """
+
+
+def test1():
+	"""
+	第一个例子演示
+	"""
+	group, labels = createDataSet()
+	print(str(group))
+	print(str(labels))
+	print(classify([0.1, 0.1], group, labels, 3))
+
+
+if __name__ == '__main__':
+	# testVector = img2vector('/Users/wangjf/Workspace/AiLearning/data/2.KNN/testDigits/0_13.txt')
+	# test1()
+	# datingClassTest()
+	handwritingClassTest()
