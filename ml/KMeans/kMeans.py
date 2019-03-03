@@ -238,7 +238,7 @@ def clusterClubs(fileName, imgName, numClust=5):
 
 
 if __name__ == "__main__":
-    #   dataMat = mat(kMeans.loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/10.KMeans/testSet2.txt'))
+    #   dataMat = mat(kMeans.loadDataSet('/Users/wangjf/WorkSpace/AiLearning/data/10.KMeans/testSet2.txt'))
     #   centList, myNewAssments = kMeans.biKmeans(dataMat, 3)
     fileName = '/Users/wangjf/Downloads/machinelearninginaction/Ch10/places.txt'
     imgName = '/Users/wangjf/Downloads/machinelearninginaction/Ch10/Portland.png'

@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 dataMat = []
-fr = open('/Users/wangjf/WorkSpace/MachineLearning/input/10.KMeans/testSet.txt')
+fr = open('/Users/wangjf/WorkSpace/AiLearning/data/10.KMeans/testSet.txt')
 for line in fr.readlines():
     curLine = line.strip().split('\t')
     fltLine = list(map(float, curLine))

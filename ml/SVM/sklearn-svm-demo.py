@@ -40,7 +40,7 @@ def loadDataSet(fileName):
     return dataMat, labelMat
 
 
-X, Y = loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testSet.txt')
+X, Y = loadDataSet('/Users/wangjf/WorkSpace/AiLearning/data/6.SVM/testSet.txt')
 
 X = np.mat(X)
 

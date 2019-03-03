@@ -469,7 +469,7 @@ import matplotlib.pyplot as plt
 
 #   test for standRegression
 def regression1():
-    xArr, yArr = loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/8.Regression/data.txt')
+    xArr, yArr = loadDataSet('/Users/wangjf/WorkSpace/AiLearning/data/8.Regression/data.txt')
     xMat = mat(xArr)
     yMat = mat(yArr)
     ws = standRegres(xArr, yArr)
@@ -484,7 +484,7 @@ def regression1():
 
 
 def regression2():
-    xArr, yArr = loadDataSet("/Users/wangjf/WorkSpace/MachineLearning/input/8.Regression/data.txt")
+    xArr, yArr = loadDataSet("/Users/wangjf/WorkSpace/AiLearning/data/8.Regression/data.txt")
     yHat = lwlrTest(xArr, xArr, yArr, 0.003)
     xMat = mat(xArr)
     srtInd = xMat[:, 1].argsort(0)  # argsort()函数是将x中的元素从小到大排列，提取其对应的index(索引)，然后输出
@@ -498,7 +498,7 @@ def regression2():
 
 # test for ridgeRegression
 def regression3():
-    abX, abY = loadDataSet("/Users/wangjf/WorkSpace/MachineLearning/input/8.Regression/abalone.txt")
+    abX, abY = loadDataSet("/Users/wangjf/WorkSpace/AiLearning/data/8.Regression/abalone.txt")
     ridgeWeights = ridgeTest(abX, abY)
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -508,7 +508,7 @@ def regression3():
 
 # test for stageWise
 def regression4():
-    xArr, yArr = loadDataSet("/Users/wangjf/WorkSpace/MachineLearning/input/8.Regression/abalone.txt")
+    xArr, yArr = loadDataSet("/Users/wangjf/WorkSpace/AiLearning/data/8.Regression/abalone.txt")
     stageWise(xArr, yArr, 0.01, 200)
     xMat = mat(xArr)
     yMat = mat(yArr).T
@@ -538,7 +538,7 @@ def abaloneTest():
         None
     '''
     # 加载数据
-    abX, abY = loadDataSet("/Users/wangjf/WorkSpace/MachineLearning/input/8.Regression/abalone.txt")
+    abX, abY = loadDataSet("/Users/wangjf/WorkSpace/AiLearning/data/8.Regression/abalone.txt")
     # 使用不同的核进行预测
     oldyHat01 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 0.1)
     oldyHat1 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 1)

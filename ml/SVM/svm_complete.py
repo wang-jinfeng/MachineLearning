@@ -387,7 +387,7 @@ def testRbf(k1=1.3):
             errorCount += 1
     print("the training error rate is:%f" % (float(errorCount) / m))
 
-    dataArr, labelArr = loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testSetRBF2.txt')
+    dataArr, labelArr = loadDataSet('/Users/wangjf/WorkSpace/AiLearning/data/6.SVM/testSetRBF2.txt')
     errorCount = 0
     dataMat = mat(dataArr)
     labelMat = mat(labelArr).transpose()
@@ -433,7 +433,7 @@ def loadImages(dirName):
 
 def testDigits(kTup=('rbf', 10)):
     #   1.导入训练数据
-    dataArr, labelArr = loadImages('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/trainingDigits')
+    dataArr, labelArr = loadImages('/Users/wangjf/WorkSpace/AiLearning/data/6.SVM/trainingDigits')
     b, alphas = smoP(dataArr, labelArr, 200, 0.0001, 10000, kTup)
     dataMat = mat(dataArr)
     labelMat = mat(labelArr).transpose()
@@ -452,7 +452,7 @@ def testDigits(kTup=('rbf', 10)):
     print('the training error rate is:%f' % (float(errorCount) / m))
 
     #   2.导入测试数据
-    dataArr, labelArr = loadImages('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testDigits')
+    dataArr, labelArr = loadImages('/Users/wangjf/WorkSpace/AiLearning/data/6.SVM/testDigits')
     errorCount = 0
     dataMat = mat(dataArr)
     labelMat = mat(labelArr).transpose()
@@ -499,7 +499,7 @@ def plotfig_SVM(xArr, yArr, ws, b, alphas):
 if __name__ == "__main__":
     #   无核函数测试
     #   获取特征和目标向量
-    #   dataArr, labelArr = loadDataSet('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/testSet.txt')
+    #   dataArr, labelArr = loadDataSet('/Users/wangjf/WorkSpace/AiLearning/data/6.SVM/testSet.txt')
     #   print(labelArr)
 
     #   b 是常量值，alphas 是拉格朗日乘子
@@ -521,7 +521,7 @@ if __name__ == "__main__":
 
     #   项目实战
     #   示例：手写识别问题回顾
-    #   loadImages('/Users/wangjf/WorkSpace/MachineLearning/input/6.SVM/trainingDigits')
+    #   loadImages('/Users/wangjf/WorkSpace/AiLearning/data/6.SVM/trainingDigits')
     #   testDigits(('rbf', 0.1))
     #   testDigits(('rbf', 10))
 
